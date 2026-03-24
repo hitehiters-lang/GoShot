@@ -42,20 +42,20 @@ func main() {
 	configPath := filepath.Join(execDir, "config.json")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		configPath = "config.json"
-		log.Println("got config")
 	}
 
+	standartConfig := false
 	file, err := os.Open(configPath)
 	if err != nil {
 		log.Println("config open error:", err)
 		log.Println("using standart config...")
+		standartConfig = true
 	}
 	defer file.Close()
-	log.Println("opened config")
 
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&conf)
-	if err != nil {
+	if err != nil && !standartConfig {
 		log.Fatalln("config parsing error:", err)
 	}
 	log.Println("saveDir path readed from config:", conf.SaveDir)
