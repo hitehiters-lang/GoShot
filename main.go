@@ -48,7 +48,6 @@ func main() {
 	file, err := os.Open(configPath)
 	if err != nil {
 		log.Fatalln("config open error:", err)
-		return
 	}
 	defer file.Close()
 	log.Println("opened config")
@@ -57,13 +56,11 @@ func main() {
 	err = decoder.Decode(&conf)
 	if err != nil {
 		log.Fatalln("config parsing error:", err)
-		return
 	}
 	log.Println("saveDir path readed from config:", conf.SaveDir)
 
 	if err = os.MkdirAll(conf.SaveDir, os.ModePerm); err != nil {
 		log.Fatalln("mkdir error:", err)
-		return
 	}
 
 	var lastSize int
@@ -72,7 +69,6 @@ func main() {
 
 	if err := clipboard.Init(); err != nil {
 		log.Fatalln("clipboard init error:", err)
-		return
 	}
 	log.Println("clipboard inited")
 
