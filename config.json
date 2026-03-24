@@ -1,3 +1,4 @@
 {
-    "saveDir":"..\\screenshots"
+    "saveDir":"..\\screenshots",
+    "checkInterval":1
 }

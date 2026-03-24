@@ -11,11 +11,20 @@ import (
 	"golang.design/x/clipboard"
 )
 
+const version = "1.0"
+
 type Configuration struct {
-	SaveDir string `json:"saveDir"`
+	SaveDir       string `json:"saveDir"`
+	CheckInterval int    `json:"checkInterval"`
 }
 
 func main() {
+
+	conf := Configuration{
+		SaveDir:       "..\\screenshots",
+		CheckInterval: 1,
+	}
+
 	execPath, _ := os.Executable()
 	execDir := filepath.Dir(execPath)
 
@@ -28,7 +37,7 @@ func main() {
 	log.SetOutput(f)
 	log.SetFlags(log.Ldate | log.Ltime)
 
-	log.Println("goshot launched at", execDir)
+	log.Println("===> GoShot", version, "launched at", execDir)
 
 	configPath := filepath.Join(execDir, "config.json")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -44,12 +53,10 @@ func main() {
 	defer file.Close()
 	log.Println("opened config")
 
-	conf := Configuration{}
-
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&conf)
 	if err != nil {
-		log.Fatalln("confing parsing error:", err)
+		log.Fatalln("config parsing error:", err)
 		return
 	}
 	log.Println("saveDir path readed from config:", conf.SaveDir)
@@ -60,7 +67,7 @@ func main() {
 	}
 
 	var lastSize int
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Second * time.Duration(conf.CheckInterval))
 	defer ticker.Stop()
 
 	if err := clipboard.Init(); err != nil {
@@ -85,7 +92,7 @@ func main() {
 		filename := filepath.Join(conf.SaveDir, fmt.Sprintf("goshot_%s.png", time.Now().Format("20060102_150405")))
 
 		if err := os.WriteFile(filename, data, 0644); err != nil {
-			log.Fatalln("write file error:", err)
+			log.Println("write file error:", err)
 			continue
 		}
 
