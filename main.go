@@ -47,7 +47,8 @@ func main() {
 
 	file, err := os.Open(configPath)
 	if err != nil {
-		log.Fatalln("config open error:", err)
+		log.Println("config open error:", err)
+		log.Println("using standart config...")
 	}
 	defer file.Close()
 	log.Println("opened config")
